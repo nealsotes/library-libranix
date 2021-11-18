@@ -62,6 +62,7 @@ else if (strcmp($_SESSION['type'], "member") == 0)
 			</div>
 		</div>
 	</section>
+	<!-- Related items section-->
 	
 	<!-- Footer-->
 	<?php
