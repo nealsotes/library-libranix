@@ -47,7 +47,7 @@ require "../components/header.php";
 								<button style="margin-top: 10px;" type="submit" value="Login" name="m_login" class="btn btn-success"> Login </button>
 							</div>
 						</form>
-						<p align="center">Don't have an account?&nbsp; Sign up as <a href="registerStudent.php">Student</a> or <a href="registerFaculty.php">Faculty</a></p>
+						<p align="center">Don't have an account?&nbsp;  <a href="registerStudent.php">Sign up now.</a></p>
 
 					</article>
 				</div>

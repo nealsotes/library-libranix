@@ -1,7 +1,7 @@
 <html>
 
 <head>
-
+	
 	<style>
 		li a {
 			text-decoration: none;
@@ -19,6 +19,7 @@
 			margin-left: 10px;
 			color: red;
 		}
+		
 	</style>
 </head>
 
@@ -31,7 +32,7 @@
 		</div>
 
 		<div style="margin-right: 100px;" class="btn-group">
-			<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<button type="button" id="button-member" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				<?php echo $_SESSION['username'] ?>
 			</button>
 			<div class="dropdown-menu">

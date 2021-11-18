@@ -20,7 +20,7 @@ require "header_member.php";
 
 <body>
 	<?php
-	$query = $con->prepare("SELECT isbn,books.title,CONCAT(authors.firstname,' ', authors.lastname),  categories.name,price,numberOfCopies  FROM books INNER JOIN authors ON books.author_id = authors.author_id INNER JOIN categories ON books.category_id = categories.category_id ");
+	$query = $con->prepare("SELECT isbn,books.title,authors.name,  categories.name,rentalPrice,numberOfCopies  FROM books INNER JOIN authors ON books.author_id = authors.author_id INNER JOIN categories ON books.category_id = categories.category_id ");
 	$query->execute();
 	$result = $query->get_result();
 	$rows = mysqli_num_rows($result);
@@ -42,7 +42,9 @@ require "header_member.php";
 						<th scope='col'>Category</th>
 						<th scope='col'>Price</th>
 						<th scope='col'>Copies available</th>
+						<th scope='col'> </th>
 					</tr>";
+					
 		for ($i = 0; $i < $rows; $i++) {
 			$row = mysqli_fetch_array($result);
 			echo "<tr>

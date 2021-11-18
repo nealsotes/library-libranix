@@ -13,6 +13,8 @@ require "header_librarian.php";
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<link href="../css/styles.css" rel="stylesheet" />
+
 </head>
 
 <body>
@@ -32,20 +34,42 @@ require "header_librarian.php";
 						<input type="text" name="b_title" class="form-control" placeholder="Enter Title" required>
 					</div>
 					<div class="form-group">
+						<input type="text" name="b_language" class="form-control" placeholder="Enter Language" required>
+					</div>
+					<div class="form-group">
+						<input type="text" name="b_publisher" class="form-control" placeholder="Enter Publisher" required>
+					</div>
+					<div class="form-group">
 						<input type="text" name="b_author" class="form-control" placeholder="Enter Author" required>
 					</div>
+					
 
 
 					<label for="pwd">Category</label>
 					<div class="form-group">
 						<select class="form-select form-select-lg mb-3" name="b_category" aria-label=".form-select-lg example">
-							<option selected>Fiction</option>
-							<option>Non-fiction</option>
-							<option>Education</option>
+							<option selected>Science Fiction</option>
+							<option value="Short Stories">Short Stories</option>
+							<option value="Suspense and Thrillers">Suspense and Thrillers</option>
+							<option value="Biographies and Autobiographies">Biographies and Autobiographies</option>
+							<option value="Cookbooks">Cookbooks</option>
+							<option value="Literary Fiction">Literary Fiction</option>
+							<option value="Romance">Romance</option>
+							<option value="Non-fiction">Non-fiction</option>
+							<option value="Education">Education</option>
+							<option value="Action and Adventure">Action and Adventure</option>
+							<option value="Classics<">Classics</option>
+							<option value="Comic Book or Graphic Novel">Comic Book or Graphic Novel</option>
+							<option value="Detective and Mystery">Detective and Mystery</option>
+							<option value="Fantasy">Fantasy</option>
+							<option value="Horror">Horror</option>
 						</select>
 					</div>
 					<div class="form-group">
 						<input type="number" name="b_price" class="form-control" placeholder="Enter Price" required>
+					</div>
+					<div class="form-group">
+						<input type="number" name="rental_price" class="form-control" placeholder="Enter Rental Price" required>
 					</div>
 					<div class="form-group">
 						<input type="number" name="b_copies" class="form-control" placeholder="Enter Copies" required>
@@ -55,24 +79,64 @@ require "header_librarian.php";
 			</div>
 		</div>
 	</div>
-
-	<body>
-
+	<script></script>
+</body>
 		<?php
+		
 		if (isset($_POST['b_add'])) {
-			$query = $con->prepare("SELECT isbn FROM book WHERE isbn = ?;");
+			$query = $con->prepare("SELECT isbn FROM books WHERE isbn = ?;");
 			$query->bind_param("s", $_POST['b_isbn']);
 			$query->execute();
 
 			if (mysqli_num_rows($query->get_result()) != 0)
 				echo error_with_field("A book with that ISBN already exists", "b_isbn");
 			else {
-				$query = $con->prepare("INSERT INTO book VALUES(?, ?, ?, ?, ?, ?);");
-				$query->bind_param("ssssdd", $_POST['b_isbn'], $_POST['b_title'], $_POST['b_author'], $_POST['b_category'], $_POST['b_price'], $_POST['b_copies']);
+				
+				
+			
+				try{
+				
+					
+					$con->begin_transaction();
+					
+				
+					
+						$stmt = $con->prepare("INSERT INTO authors(name) VALUES(?);");
+						$stmt->bind_param("s",$_POST['b_author']);
+						$stmt->execute();
+					
+					
+			
+				
+						$stmt = $con->prepare("INSERT INTO publishers(name) VALUES(?);");
+						$stmt->bind_param("s", $_POST["b_publisher"]);
+						$stmt->execute();
+					
+					
+					
+					
+				
+						$stmt = $con->prepare("INSERT INTO categories(name) VALUES(?)");
+						$stmt->bind_param("s", $_POST['b_category']);
+						$stmt->execute();
+					
 
-				if (!$query->execute())
+					
+
+					
+					
+					$stmt = $con->prepare("INSERT INTO books (author_id,publisher_id,category_id,title,isbn,language,price,rentalPrice,numberOfCopies) VALUES((SELECT author_id FROM authors WHERE name = ?), (SELECT publisher_id FROM publishers WHERE name = ?),(SELECT category_id FROM categories WHERE name = ?), ?, ?, ?, ?, ?,?);");
+					$stmt->bind_param("ssssssddd", $_POST['b_author'], $_POST['b_publisher'],$_POST['b_category'], $_POST['b_title'], $_POST['b_isbn'],$_POST['b_language'],$_POST['b_price'],$_POST['rental_price'], $_POST['b_copies']);
+					$stmt->execute();
+					$con->commit();
+				}catch(PDOException $ex){
+					$con->rollback();
+					echo $ex->getMessage();
+				}
+
+				/* if (!$queryBooks->execute() && !$queryAuthor->execute() && !$queryCategory->execute() && !$queryPublisher->execute())
 					die(error_without_field("ERROR: Couldn't add book"));
-				echo success("Successfully added book");
+				echo success("Successfully added book"); */
 			}
 		}
 		?>

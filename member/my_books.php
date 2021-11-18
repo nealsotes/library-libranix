@@ -13,6 +13,7 @@ require "header_member.php";
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<link href="../css/styles.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -48,7 +49,7 @@ require "header_member.php";
 		for ($i = 0; $i < $rows; $i++) {
 			$isbn = mysqli_fetch_array($result)[0];
 			if ($isbn != NULL) {
-				$query = $con->prepare("SELECT title,CONCAT(authors.firstname,' ',authors.lastname),categories.name  FROM books INNER JOIN authors INNER JOIN categories WHERE isbn = ?;");
+				$query = $con->prepare("SELECT title,authors.name,categories.name  FROM books INNER JOIN authors INNER JOIN categories WHERE isbn = ?;");
 				$query->bind_param("s", $isbn);
 				$query->execute();
 				$innerRow = mysqli_fetch_array($query->get_result());
@@ -71,7 +72,7 @@ require "header_member.php";
 			}
 		}
 		echo "</table><br />";
-		echo "<button type='submit' style='margin-right: 100px; margin-bottom: 100px' class='btn btn-danger float-right'  aria-haspopup='false' name='b_return' aria-expanded='false'> Return Book </button> ";
+		echo "<button type='submit' id='button-user style='margin-right: 100px; margin-bottom: 100px' class='btn btn-danger float-right'  aria-haspopup='false' name='b_return' aria-expanded='false'> Return Book </button> ";
 		echo "</form></div>";
 	}
 	
@@ -113,10 +114,8 @@ require "header_member.php";
 				$books++;
 			}
 		if ($books > 0) {
-			echo '<script>
-							document.getElementById("success").innerHTML = "Successfully returned ' . $books . ' books";
-							document.getElementById("success-message").style.display = "block";
-						</script>';
+				echo success("Successfully returned " . $books . " requests"); 
+				
 			$query = $con->prepare("SELECT balance FROM memberrecords WHERE username = ?;");
 			$query->bind_param("s", $_SESSION['username']);
 			$query->execute();

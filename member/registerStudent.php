@@ -31,7 +31,7 @@ require "../components/header.php";
 				</div>
 				<div class="card">
 					<header class="card-header">
-						<h4 class="card-title mt-2">Student Form</h4>
+						<h4 class="card-title mt-2">Member Form</h4>
 					</header>
 					<article class="card-body">
 						<form id="form" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
